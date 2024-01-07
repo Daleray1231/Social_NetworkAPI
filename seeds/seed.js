@@ -1,94 +1,100 @@
 const mongoose = require('mongoose');
-const { Member, Post } = require('../models');
+const { User, Thought } = require('../models');
 
-mongoose.connect('mongodb://127.0.0.1:27017/communityDB');
+mongoose.connect('mongodb://127.0.0.1:27017/socialNetworkDB');
 
-const memberData = [
+const userData = [
   {
-    username: 'JohnDoe',
-    email: 'john@example.com',
+    username: 'Mickey',
+    email: 'mickey@disney.com',
     thoughts: [],
     friends: [],
   },
   {
-    username: 'JaneSmith',
-    email: 'jane@example.com',
+    username: 'Minnie',
+    email: 'minnie@disney.com',
     thoughts: [],
     friends: [],
   },
   {
-    username: 'AlexJohnson',
-    email: 'alex@example.com',
+    username: 'Donald',
+    email: 'donald@disney.com',
     thoughts: [],
     friends: [],
   },
   {
-    username: 'EmilyBrown',
-    email: 'emily@example.com',
+    username: 'Goofy',
+    email: 'goofy@disney.com',
     thoughts: [],
     friends: [],
   },
   {
-    username: 'MichaelClark',
-    email: 'michael@example.com',
+    username: 'Pluto',
+    email: 'pluto@disney.com',
     thoughts: [],
     friends: [],
   },
+  // Add more Disney users if needed
 ];
 
-const postData = [
+const thoughtData = [
   {
-    thoughtText: 'Life is what happens when you’re busy making other plans.',
-    username: 'JohnDoe',
+    thoughtText: 'Oh boy!',
+    username: 'Mickey',
     reactions: [],
   },
   {
-    thoughtText: 'The only limit to our realization of tomorrow will be our doubts of today.',
-    username: 'JaneSmith',
+    thoughtText: 'Laughter is timeless.',
+    username: 'Minnie',
     reactions: [],
   },
   {
-    thoughtText: 'Every accomplishment starts with the decision to try.',
-    username: 'AlexJohnson',
+    thoughtText: 'Quack!',
+    username: 'Donald',
     reactions: [],
   },
   {
-    thoughtText: 'In the middle of difficulty lies opportunity.',
-    username: 'EmilyBrown',
+    thoughtText: 'Gawrsh!',
+    username: 'Goofy',
     reactions: [],
   },
   {
-    thoughtText: 'Strive not to be a success, but rather to be of value.',
-    username: 'MichaelClark',
+    thoughtText: 'Woof woof!',
+    username: 'Pluto',
     reactions: [],
   },
+  // Add more thoughts if needed
 ];
 
 const seedDatabase = async () => {
-  await Member.deleteMany({});
-  await Post.deleteMany({});
+  await User.deleteMany({});
+  await Thought.deleteMany({});
 
-  const insertedMembers = await Member.insertMany(memberData);
+  const insertedUsers = await User.insertMany(userData);
   
-  const memberMap = insertedMembers.reduce((map, member) => {
-    map[member.username] = member._id;
+  // Building a map of usernames to their respective IDs
+  const userMap = insertedUsers.reduce((map, user) => {
+    map[user.username] = user._id;
     return map;
   }, {});
 
-  const johnFriends = [memberMap['JaneSmith'], memberMap['EmilyBrown']];
-  const janeFriends = [memberMap['JohnDoe'], memberMap['MichaelClark']];
+  // Assign friends (bi-directional relationships)
+  const mickeyFriends = [userMap['Minnie'], userMap['Goofy']];
+  const minnieFriends = [userMap['Mickey'], userMap['Pluto']];
+  // Add friends to other Disney characters as needed
 
-  await Member.findByIdAndUpdate(memberMap['JohnDoe'], { $addToSet: { friends: { $each: johnFriends } } });
-  await Member.findByIdAndUpdate(memberMap['JaneSmith'], { $addToSet: { friends: { $each: janeFriends } } });
+  await User.findByIdAndUpdate(userMap['Mickey'], { $addToSet: { friends: { $each: mickeyFriends } } });
+  await User.findByIdAndUpdate(userMap['Minnie'], { $addToSet: { friends: { $each: minnieFriends } } });
+  // Update friends for other Disney characters as needed
 
-  const posts = postData.map(post => {
-    if (memberMap[post.username]) {
-      post = { ...post, user: memberMap[post.username] };
+  const thoughts = thoughtData.map(thought => {
+    if (userMap[thought.username]) {
+      thought = { ...thought, user: userMap[thought.username] };
     }
-    return post;
+    return thought;
   });
 
-  await Post.insertMany(posts);
+  await Thought.insertMany(thoughts);
 
   console.log('Database seeded!');
   process.exit(0);

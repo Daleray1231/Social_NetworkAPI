@@ -41,6 +41,60 @@ router.post('/users', async (req, res) => {
   }
 });
 
+// Update a user's information
+router.put('/users/:id', async (req, res) => {
+  if (req.body.username === '' || req.body.email === '') {
+    res.status(400).json({ message: 'Username and email cannot be left empty.' });
+    return;
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updatedUser) {
+      res.status(404).json({ message: 'No user found matching this id!' });
+      return;
+    }
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+// Delete a user
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      res.status(404).json({ message: 'No user was found with this id!' });
+      return;
+    }
+    res.json({ message: 'User has been successfully deleted.' });
+  } catch (err) {
+    res.status(400).json(err);
+  }
+});
+
+// Endpoint to get a user's friends list by user ID
+router.get('/users/:userId/friends', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Fetch the friends' details based on the IDs in the user's friends array
+    const friends = await User.find({ _id: { $in: user.friends } });
+    
+    res.json({ friends: friends });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 // Add a friend for a specific user
 router.post('/users/:userId/friends/:friendId', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId) || !mongoose.Types.ObjectId.isValid(req.params.friendId)) {
@@ -70,38 +124,6 @@ router.post('/users/:userId/friends/:friendId', async (req, res) => {
       return;
     }
     res.json(user);
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
-
-// Update a user's information
-router.put('/users/:id', async (req, res) => {
-  if (req.body.username === '' || req.body.email === '') {
-    res.status(400).json({ message: 'Username and email cannot be left empty.' });
-    return;
-  }
-  try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!updatedUser) {
-      res.status(404).json({ message: 'No user found matching this id!' });
-      return;
-    }
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(400).json(err);
-  }
-});
-
-// Delete a user
-router.delete('/users/:id', async (req, res) => {
-  try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
-    if (!deletedUser) {
-      res.status(404).json({ message: 'No user was found with this id!' });
-      return;
-    }
-    res.json({ message: 'User has been successfully deleted.' });
   } catch (err) {
     res.status(400).json(err);
   }

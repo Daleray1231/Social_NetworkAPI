@@ -74,6 +74,25 @@ router.delete('/thoughts/:id', async (req, res) => {
     }
 });
 
+// Route to get reactions by Thought ID
+router.get('/thoughts/:thoughtId/reactions', async (req, res) => {
+    try {
+        // Find a specific thought by its ID
+        const thought = await Thought.findById(req.params.thoughtId);
+        if (!thought) {
+            // If no thought found with the provided ID, return a 404 status
+            res.status(404).json({ message: 'No thought found with this id.' });
+            return;
+        }
+
+        // Return reactions associated with the thought ID
+        res.json(thought.reactions);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+
 // Route to add a reaction to a specific thought
 router.post('/thoughts/:thoughtId/reactions', async (req, res) => {
     try {

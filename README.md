@@ -7,10 +7,13 @@ This repository contains the backend code for a social networking platform API b
 - **Friendship Handling:** Adding and removing friends for users
 - **Thoughts and Reactions:** Basic structure for handling thoughts and reactions (see Thoughts and Reaction models)
 
+## Video Demo
+[Watch the Video Demo Here](https://share.vidyard.com/watch/exNjifKfpf6zu58AA4zRrm?) 
+
 ## Installation
-1. **Clone the repository:**
+1. **[Clone the Repository](https://github.com/Daleray1231/Social_NetworkAPI)**
     ```bash
-    git clone https://github.com/your-username/social-network-api.git
+    git clone https://github.com/Daleray1231/Social_NetworkAPI
     ```
 
 2. **Install dependencies:**

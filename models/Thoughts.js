@@ -6,7 +6,7 @@ const thoughtSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 1,
-    maxlength: 280, 
+    maxlength: 280,
   },
   createdAt: {
     type: Date,
@@ -16,7 +16,7 @@ const thoughtSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  reactions: [reactionSchema] 
+  reactions: [reactionSchema]
 });
 
 const Thought = mongoose.model('Thought', thoughtSchema);

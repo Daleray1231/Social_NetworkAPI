@@ -1,6 +1,8 @@
 # Social Network API
 
-This repository contains the backend code for a social networking platform API built using Express.js and MongoDB.
+This repository contains the backend code for a social networking platform API built using Express.js and MongoDB.  
+  
+![alt text](images/Social_API.png)
 
 ## Features
 - **User Management:** CRUD operations for users (create, read, update, delete)

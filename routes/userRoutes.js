@@ -2,7 +2,6 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 const { User } = require('../models');
 
-// Get all users
 router.get('/users', async (req, res) => {
   try {
     const userData = await User.find({});
@@ -12,7 +11,6 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// Get a specific user by ID
 router.get('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -26,7 +24,6 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-// Create a new user
 router.post('/users', async (req, res) => {
   if (!req.body.username || !req.body.email) {
     res.status(400).json({ message: 'Please provide both username and email.' });
@@ -41,7 +38,6 @@ router.post('/users', async (req, res) => {
   }
 });
 
-// Update a user's information
 router.put('/users/:id', async (req, res) => {
   if (req.body.username === '' || req.body.email === '') {
     res.status(400).json({ message: 'Username and email cannot be left empty.' });
@@ -59,7 +55,6 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
-// Delete a user
 router.delete('/users/:id', async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -73,29 +68,25 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-// Endpoint to get a user's friends list by user ID
 router.get('/users/:userId/friends', async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
-    
+
     if (!user) {
       res.status(404).json({ message: 'User not found' });
       return;
     }
 
-    // Fetch the friends' details based on the IDs in the user's friends array
     const friends = await User.find({ _id: { $in: user.friends } });
-    
+
     res.json({ friends: friends });
   } catch (err) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Add a friend for a specific user
 router.post('/users/:userId/friends/:friendId', async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId) || !mongoose.Types.ObjectId.isValid(req.params.friendId)) {
     res.status(400).json({ message: 'Invalid userId or friendId provided.' });
@@ -129,7 +120,6 @@ router.post('/users/:userId/friends/:friendId', async (req, res) => {
   }
 });
 
-// Remove a friend from a user's friend list
 router.delete('/users/:userId/friends/:friendId', async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
